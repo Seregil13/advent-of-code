@@ -2,7 +2,7 @@ fun main() {
     Day03().run(checkTest = true)
 }
 
-class Day03: Problem() {
+class Day03 : Problem() {
     override val problemNumber: String
         get() = "03"
     override val testPart1Solution: Int
@@ -10,74 +10,71 @@ class Day03: Problem() {
     override val testPart2Solution: Int
         get() = 230
 
-    override fun part1(input: List<String>): Int {
-        val size = input[0].length
+    private fun List<String>.getColumn(i: Int): String = this.map { it[i] }.joinToString("")
+    private fun String.hasMoreChar(char: Char): Boolean {
+        val count = this.count { it == char }
+        return count > this.length - count
+    }
 
-        val zeros = IntArray(size)
-        val ones = IntArray(size)
+    private fun String.hasFewerChar(char: Char): Boolean {
+        val count = this.count { it == char }
+        return count < this.length - count
+    }
 
-        for (line in input) {
-            for (index in line.indices) {
-                when (line[index]) {
-                    '0' -> zeros[index]++
-                    '1' -> ones[index]++
-                }
-            }
+    private fun gamma(input: List<String>) = buildString {
+        for (index in input[0].indices) {
+            val hasMoreZeros = input.getColumn(index).hasMoreChar('0')
+            if (hasMoreZeros) append('0') else append('1')
         }
+    }.toInt(2)
 
-        var gamma = ""
-        var epsilon = ""
-        for (i in 0 until size) {
-            if (zeros[i] > ones[i]) {
-                gamma += '0'
-                epsilon += '1'
+    private fun epsilon(input: List<String>) = buildString {
+        for (index in input[0].indices) {
+            if (input.getColumn(index).hasMoreChar('1')) {
+                append('0')
             } else {
-                gamma += '1'
-                epsilon += '0'
+                append('1')
             }
         }
+    }.toInt(2)
 
-        return gamma.toInt(2) * epsilon.toInt(2)
+    override fun part1(input: List<String>): Int {
+        return gamma(input) * epsilon(input)
     }
 
     override fun part2(input: List<String>): Int {
-        return calculate(input, true).toInt(2) * calculate(input, false).toInt(2)
+        return oxygen(input) * co2(input)
     }
 
-    private fun calculate(input: List<String>, oxygen: Boolean): String {
-        var rem = input
+    private fun oxygen(input: List<String>): Int {
+        var mutableInput = input
 
-        val size = input[0].length
-        var index = 0
-        while (rem.size > 1 && index < size) {
+        for (index in mutableInput[0].indices) {
+            val hasMoreZeros = mutableInput.getColumn(index).hasMoreChar('0')
 
-            var zeros = 0
-            var ones = 0
-
-            for (line in rem) {
-                when (line[index]) {
-                    '0' -> zeros++
-                    '1' -> ones++
-                }
+            mutableInput = mutableInput.filter {
+                if (hasMoreZeros) it[index] == '0' else it[index] == '1'
             }
 
-            rem = if (oxygen) {
-                if (ones >= zeros) {
-                    rem.filter { it[index] == '1' }
-                } else {
-                    rem.filter { it[index] == '0' }
-                }
-            } else {
-                if (zeros <= ones) {
-                    rem.filter { it[index] == '0' }
-                } else {
-                    rem.filter { it[index] == '1' }
-                }
-            }
-
-            index ++
+            if (mutableInput.size == 1) break
         }
 
-        return rem[0]
+        return mutableInput.single().toInt(2)
+    }
+
+    private fun co2(input: List<String>): Int {
+        var mutableInput = input
+
+        for (index in mutableInput[0].indices) {
+            val hasFewerOnes = mutableInput.getColumn(index).hasFewerChar('1')
+
+            mutableInput = mutableInput.filter {
+                if (hasFewerOnes) it[index] == '1' else it[index] == '0'
+            }
+
+            if (mutableInput.size == 1) break
+        }
+
+        return mutableInput.single().toInt(2)
     }
 }
