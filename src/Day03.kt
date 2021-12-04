@@ -38,12 +38,15 @@ class Day03 : Problem() {
         }
     }.toInt(2)
 
-    override fun part1(input: List<String>): Int {
-        return gamma(input) * epsilon(input)
+    override fun part1(input: String): Int {
+        val lines = input.lines().filter { it.isNotBlank() }
+
+        return gamma(lines) * epsilon(lines)
     }
 
-    override fun part2(input: List<String>): Int {
-        return oxygen(input) * co2(input)
+    override fun part2(input: String): Int {
+        val lines = input.lines().filter { it.isNotBlank() }
+        return oxygen(lines) * co2(lines)
     }
 
     private fun oxygen(input: List<String>): Int {

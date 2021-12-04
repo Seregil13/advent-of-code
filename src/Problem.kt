@@ -6,14 +6,14 @@ abstract class Problem {
     abstract val testPart2Solution: Int
 
     private val input
-        get() = File("src", "Day${problemNumber}.txt").readLines()
+        get() = File("src", "Day${problemNumber}.txt").readText()
 
     private val testInput
-        get() = File("src", "Day${problemNumber}_test.txt").readLines()
+        get() = File("src", "Day${problemNumber}_test.txt").readText()
 
 
-    abstract fun part1(input: List<String>): Int
-    abstract fun part2(input: List<String>): Int
+    abstract fun part1(input: String): Int
+    abstract fun part2(input: String): Int
 
     fun run(checkTest: Boolean) {
         if (checkTest) {
